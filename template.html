@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Создание списка</title>
 </head>
+
 <body>
 <h1>Список сообщений</h1>
 <form action="" onsubmit="sendMessage(event)">
@@ -12,12 +13,14 @@
 </form>
 <ol id='messages'>
 </ol>
+
 <script>
     var ws = new WebSocket("ws://localhost:8000/ws");
     ws.onmessage = function (event) {
         var messages = document.getElementById('messages')
         var message = document.createElement('li')
-        var content = document.createTextNode(event.data)
+        var recv_data = JSON.parse(event.data)
+        var content = document.createTextNode(`${recv_data.text} at ${recv_data.datetime}`)
         message.appendChild(content)
         messages.appendChild(message)
     };
