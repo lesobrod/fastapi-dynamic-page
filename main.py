@@ -1,28 +1,19 @@
-import uvicorn
-from fastapi import FastAPI
 
-app = FastAPI()
+from fastapi import FastAPI, WebSocket
+from fastapi.responses import HTMLResponse
 
+app = FastAPI(title="List API")
+
+with open('template.html', 'r', encoding='UTF-8') as file:
+    HTML = file.read()
 
 @app.get("/")
-def read_root():
-    return {"Hello": "World"}
+async def get():
+    return HTMLResponse(HTML)
 
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
-
-
-@app.get("/async/")
-async def async_read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/async/items/{item_id}")
-async def async_read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
-
-
-if __name__ == '__main__':
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(data)
