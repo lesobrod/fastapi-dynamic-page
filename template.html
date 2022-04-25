@@ -4,24 +4,21 @@
     <meta charset="UTF-8">
     <title>Создание списка</title>
 </head>
-
 <body>
 <h1>Список сообщений</h1>
 <form action="" onsubmit="sendMessage(event)">
     <input type="text" id="messageText" autocomplete="off"/>
     <button>Отправить</button>
 </form>
-<ol id='messages'>
-</ol>
-
+<div id='messages'>
+</div>
 <script>
     var ws = new WebSocket("ws://localhost:8000/ws");
     ws.onmessage = function (event) {
-        var messages = document.getElementById('messages')
-        var message = document.createElement('li')
         var recv_data = JSON.parse(event.data)
-        var content = document.createTextNode(`${recv_data.text} at ${recv_data.datetime}`)
-        message.appendChild(content)
+        var messages = document.getElementById('messages')
+        var message = document.createElement('p')
+        message.innerHTML = `${recv_data.id}. ${recv_data.text} at ${recv_data.timestamp}`
         messages.appendChild(message)
     };
 
