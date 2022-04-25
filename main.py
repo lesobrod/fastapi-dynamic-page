@@ -16,16 +16,18 @@ async def get() -> HTMLResponse:
 
 @app.websocket_route("/ws")
 async def websocket_endpoint(websocket: WebSocket) -> None:
+    counter = 0
     await websocket.accept()
     while True:
         # receive data
         recv_data = await websocket.receive_text()
-
+        counter += 1
         # send data
         now = datetime.now()
-        dt_string = now.strftime("%d/%m/%Y %H:%M")
-        send_data = {
-            'datetime': dt_string,
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        new_message = {
+            'id': counter,
+            'timestamp': dt_string,
             'text': recv_data
         }
-        await websocket.send_json(send_data)
+        await websocket.send_json(new_message)
